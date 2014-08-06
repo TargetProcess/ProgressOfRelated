@@ -1,0 +1,16 @@
+{
+    "linters": {
+        "eslint": {
+            "excludes": ["**/node_modules/**","**/bower_components/**","**/vendor/**"]
+        },
+        "jscs": {
+            "excludes": ["**/node_modules/**","**/bower_components/**","**/vendor/**"]
+        },
+        "jshint": {
+            "excludes": ["**/node_modules/**","**/bower_components/**","**/vendor/**"]
+        },
+        "scss": {
+            "excludes": ["**/node_modules/**","**/bower_components/**","**/vendor/**"]
+        }
+    }
+}
