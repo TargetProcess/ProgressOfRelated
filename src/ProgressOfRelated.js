@@ -53,6 +53,7 @@ tau
             },
 
             getConfig: function(entity) {
+
                 var configs = _.where(mashupConfig, {
                     entityType: entity.entityType.name.toLowerCase()
                 });
@@ -63,7 +64,7 @@ tau
                 var resultConfig = configs[0];
 
                 if (_.find(configs, function(v) {
-                    return v.projectId;
+                    return v.projectId.length;
                 })) {
                     resultConfig = store
                         .getDef(entity.entityType.name, {
@@ -74,9 +75,8 @@ tau
                         })
                         .then(function(res) {
                             var projectId = res.project && res.project.id;
-
-                            var config = _.findWhere(configs, {
-                                projectId: projectId
+                            var config = _.find(configs, function(c) {
+                                return c.projectId.indexOf(projectId) >= 0;
                             });
 
                             return config;
@@ -176,9 +176,7 @@ tau
 
                 var processes = store
                     .getDef('context', {
-                        id: 1,
                         fields: [{
-
                             'processes': [
                                 'isDefault',
                                 'practices'
@@ -198,7 +196,7 @@ tau
                             return [v.id, planning.effortPoints.toLowerCase()];
                         }));
 
-                        processes[0] = processes[def.id];
+                        processes[0] = processes[def ? def.id : 0];
                         return processes;
                     });
 
