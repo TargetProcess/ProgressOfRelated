@@ -184,7 +184,7 @@ tau
                         }]
                     })
                     .then(function(res) {
-
+                        res = res[0];
                         var def = _.findWhere(res.processes, {
                             isDefault: true
                         });
