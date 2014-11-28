@@ -5,7 +5,7 @@ tau
 
         var config = [{
             entityType: 'request', //  which page of entity mashup will be shown on
-            projectId: 2, // entity should belong this project, leave empty to skip check
+            projectId: 2, // entity should belong this project, can be array, leave empty to skip check
             // relationEntityTypes: ['bug', 'userstory'], // which entity types should be calculated, leave empty to calculate all
             // relationTypes: ['outbound', 'inbound'] // which types of relations should be calculated, leave empty to calculate all
         }];
@@ -16,6 +16,7 @@ tau
                 v.entityType = 'request';
             }
 
+            v.projectId = _.compact([].concat(v.projectId));
             v.relationEntityTypes = _.toArray(v.relationEntityTypes);
             v.relationTypes = _.toArray(v.relationTypes);
 
@@ -80,6 +81,7 @@ tau
             },
 
             getConfig: function(entity) {
+
                 var configs = _.where(mashupConfig, {
                     entityType: entity.entityType.name.toLowerCase()
                 });
@@ -90,7 +92,7 @@ tau
                 var resultConfig = configs[0];
 
                 if (_.find(configs, function(v) {
-                    return v.projectId;
+                    return v.projectId.length;
                 })) {
                     resultConfig = store
                         .getDef(entity.entityType.name, {
@@ -101,9 +103,8 @@ tau
                         })
                         .then(function(res) {
                             var projectId = res.project && res.project.id;
-
-                            var config = _.findWhere(configs, {
-                                projectId: projectId
+                            var config = _.find(configs, function(c) {
+                                return c.projectId.indexOf(projectId) >= 0;
                             });
 
                             return config;
@@ -203,9 +204,7 @@ tau
 
                 var processes = store
                     .getDef('context', {
-                        id: 1,
                         fields: [{
-
                             'processes': [
                                 'isDefault',
                                 'practices'
@@ -213,7 +212,7 @@ tau
                         }]
                     })
                     .then(function(res) {
-
+                        res = res[0];
                         var def = _.findWhere(res.processes, {
                             isDefault: true
                         });
@@ -225,7 +224,7 @@ tau
                             return [v.id, planning.effortPoints.toLowerCase()];
                         }));
 
-                        processes[0] = processes[def.id];
+                        processes[0] = processes[def ? def.id : 0];
                         return processes;
                     });
 
